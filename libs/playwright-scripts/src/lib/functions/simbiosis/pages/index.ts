@@ -1,1 +1,1 @@
-export * from './simbiosis-home.page';export * from './simbiosis-about.page';
+export * from './simbiosis-home.page';

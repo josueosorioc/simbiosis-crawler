@@ -1,31 +1,24 @@
-import {
-  Locators,
-  PlaywrightPage,
-  Selectors,
-} from '../../../shared/playwright.page';
-import { SimbiosisAboutUsPage } from './simbiosis-about.page';
+import { Page } from 'playwright';
 
-export class SimbiosisHomePage
-  extends PlaywrightPage
-  implements Selectors, Locators
-{
-  public static override url = 'https://rfxsolutions.com';
+export class SimbiosisHomePage {
+  static url = 'https://www.kansas.gov/ssrv-ksbhada/search.html';
 
-  static get selectors() {
-    return {
-      aboutUs: '[href="about"]',
-    };
+  constructor(private page: Page) { }
+
+  async goto() {
+    await this.page.goto(SimbiosisHomePage.url);
   }
 
-  get locators() {
-    return {
-      aboutUs: this.page.locator(SimbiosisHomePage.selectors.aboutUs),
-    };
+  async searchLicense(licenseNumber: string = '04-33861', profession: string = 'Medical Doctor (MD)') {
+    await this.page.fill('input[name="licenseNumber"]', licenseNumber);
+    await this.page.selectOption('select[name="profession"]', { label: profession });
+    await this.page.click('#id_submit');
   }
 
-  async navToAboutUs () {
-    await this.locators.aboutUs.click()
-    await this.page.waitForURL(SimbiosisAboutUsPage.url)
-    return new SimbiosisAboutUsPage(this.page)
+  async clickDetails() {
+    const link = await this.page.waitForSelector('table tbody a');
+    const name = await link.textContent();
+    await link.click();
+    console.log(name?.trim());
   }
 }
